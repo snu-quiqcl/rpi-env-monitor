@@ -4,6 +4,9 @@
 # Local sensor configuration (copied from sensors.example.json)
 sensors.json
 
+# Local systemd unit (machine-specific)
+systemd/rpi-env-publisher.service
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

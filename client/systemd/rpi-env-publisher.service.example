@@ -1,0 +1,36 @@
+[Unit]
+Description=Lab environment MQTT publisher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# NOTE: Change this user/group to the account that owns the project
+User=pi
+Group=pi
+
+# NOTE: Change /home/pi/client to the absolute path of your client project root
+WorkingDirectory=/home/pi/client/src
+
+# NOTE: Path to your .env file with MQTT and device settings
+EnvironmentFile=/home/pi/client/.env
+
+# --- pyenv specific settings ---
+# NOTE: Adjust PYENV_ROOT and PATH if pyenv is installed elsewhere
+Environment=PYENV_ROOT=/home/pi/.pyenv
+Environment=PATH=/home/pi/.pyenv/shims:/home/pi/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+# Make Python stdout/stderr unbuffered so logs appear immediately in journald
+Environment=PYTHONUNBUFFERED=1
+# -------------------------------
+
+# Use the python that pyenv resolves based on .python-version in WorkingDirectory
+ExecStart=/usr/bin/env python mqtt_publisher.py
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
