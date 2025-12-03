@@ -14,11 +14,15 @@ class DHT22Config:
     Configuration for a single DHT22 sensor.
 
     Fields:
-        pin_number: BCM pin number (e.g., 4 for GPIO4).
+        pin_number: BCM pin number (e.g., 17 for GPIO17).
         name_prefix: Base name for this sensor (e.g., 'dht22' or 'lab_dht1').
+        samples: Number of single measurements to average.
+        sample_delay: Delay in seconds between single measurements.
     """
     pin_number: int
     name_prefix: str = "dht22"
+    samples: int = 5
+    sample_delay: float = 2.0
 
 
 class DHT22Sensor:
@@ -30,29 +34,23 @@ class DHT22Sensor:
     - Average the successful readings.
     """
 
-    def __init__(
-        self,
-        config: DHT22Config,
-        num_samples: int = 5,
-        delay_between_samples: float = 2.0,
-    ) -> None:
+    def __init__(self, config: DHT22Config) -> None:
         """
         Initialize the DHT22 sensor.
 
         Args:
-            config: DHT22Config object with pin_number and name_prefix.
-            num_samples: Number of single measurements to average.
-            delay_between_samples: Delay in seconds between single measurements.
+            config: DHT22Config object with pin_number, name_prefix,
+                    samples, and sample_delay.
         """
         try:
-            # board.D4, board.D17, ... based on the pin_number
+            # board.D17, board.D27, ... based on the pin_number
             self.pin = getattr(board, f"D{config.pin_number}")
         except AttributeError as exc:
             raise ValueError(f"Invalid pin number for DHT22: {config.pin_number}") from exc
 
         self.name_prefix = config.name_prefix
-        self.num_samples = num_samples
-        self.delay_between_samples = delay_between_samples
+        self.samples = max(1, config.samples)
+        self.sample_delay = config.sample_delay
 
     def _measure_single(self) -> Optional[tuple[float, float]]:
         """
@@ -70,7 +68,7 @@ class DHT22Sensor:
                 return None
             return float(temperature), float(humidity)
         except Exception as e:
-            print(f"[DHT22] Single measurement failed: {e}")
+            print(f"[DHT22] Single measurement failed on pin {self.pin}: {e}")
             return None
         finally:
             if device is not None:
@@ -91,10 +89,10 @@ class DHT22Sensor:
         total_hum = 0.0
         count = 0
 
-        for _ in range(self.num_samples):
+        for _ in range(self.samples):
             result = self._measure_single()
             if result is None:
-                time.sleep(self.delay_between_samples)
+                time.sleep(self.sample_delay)
                 continue
 
             temperature, humidity = result
@@ -102,7 +100,7 @@ class DHT22Sensor:
             total_hum += humidity
             count += 1
 
-            time.sleep(self.delay_between_samples)
+            time.sleep(self.sample_delay)
 
         if count == 0:
             print("[DHT22] Failed to obtain any valid readings.")

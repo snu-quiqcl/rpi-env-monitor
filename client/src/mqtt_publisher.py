@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from models import Measurement
 from publisher_core import run_publisher
 from sensors.dht22 import DHT22Config, DHT22Sensor
+from sensors.water_presence import WaterPresenceConfig, WaterPresenceSensor
 
 
 # Load environment variables (for DEVICE_NAME, MQTT, config path, etc.)
@@ -42,7 +43,8 @@ def build_sensors_from_config() -> List[Any]:
 
     {
       "sensors": [
-        {"type": "dht22", "pin": 4, "name_prefix": "env1"},
+        {"type": "dht22", "pin": 17, "name_prefix": "env1", "samples": 5, "sample_delay": 2.0},
+        {"type": "water_presence", "pin": 27, "name_prefix": "water", "samples": 5, "sample_delay": 0.05},
       ]
     }
     """
@@ -70,7 +72,7 @@ def build_sensors_from_config() -> List[Any]:
 
         s_type = s_cfg.get("type")
         pin = s_cfg.get("pin")
-        name_prefix = s_cfg.get("name_prefix", "")
+        name_prefix = s_cfg.get("name_prefix")
 
         if s_type is None or pin is None:
             print(f"[INIT] Missing 'type' or 'pin' in sensor entry at index {idx}. Skipping.")
@@ -86,13 +88,45 @@ def build_sensors_from_config() -> List[Any]:
             if not name_prefix:
                 name_prefix = f"dht22_{idx + 1}"
 
+            samples = s_cfg.get("samples")
+            sample_delay = s_cfg.get("sample_delay")
+
+            cfg_kwargs = {}
+            if samples is not None:
+                cfg_kwargs["samples"] = samples
+            if sample_delay is not None:
+                cfg_kwargs["sample_delay"] = sample_delay
+
             cfg_obj = DHT22Config(
                 pin_number=pin_int,
                 name_prefix=name_prefix,
+                **cfg_kwargs
             )
             sensor = DHT22Sensor(config=cfg_obj)
             sensors.append(sensor)
             print(f"[INIT] Added DHT22 sensor on pin {pin_int} with prefix {name_prefix!r}")
+
+        elif s_type == "water_presence":
+            if not name_prefix:
+                name_prefix = f"water_presence_{idx + 1}"
+
+            samples = s_cfg.get("samples")
+            sample_delay = s_cfg.get("sample_delay")
+
+            cfg_kwargs = {}
+            if samples is not None:
+                cfg_kwargs["samples"] = samples
+            if sample_delay is not None:
+                cfg_kwargs["sample_delay"] = sample_delay
+
+            cfg_obj = WaterPresenceConfig(
+                pin=pin_int,
+                name_prefix=name_prefix,
+                **cfg_kwargs
+            )
+            sensor = WaterPresenceSensor(config=cfg_obj)
+            sensors.append(sensor)
+            print(f"[INIT] Added WaterPresence sensor on pin {pin_int} with prefix {name_prefix!r}")
 
         else:
             print(f"[INIT] Unknown sensor type {s_type!r} at index {idx}. Skipping.")

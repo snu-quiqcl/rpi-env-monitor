@@ -2,13 +2,17 @@
     "sensors": [
         {
             "type": "dht22",
-            "pin": 4,
-            "name_prefix": "env1"
+            "pin": 17,
+            "name_prefix": "env1",
+            "samples": 5,
+            "sample_delay": 2.0
         },
         {
-            "type": "dht22",
-            "pin": 17,
-            "name_prefix": "env2"
+            "type": "water_presence",
+            "pin": 27,
+            "name_prefix": "env2",
+            "samples": 5,
+            "sample_delay": 0.05
         }
     ]
 }
