@@ -1,0 +1,14 @@
+{
+    "sensors": [
+        {
+            "type": "dht22",
+            "pin": 4,
+            "name_prefix": "env1"
+        },
+        {
+            "type": "dht22",
+            "pin": 17,
+            "name_prefix": "env2"
+        }
+    ]
+}

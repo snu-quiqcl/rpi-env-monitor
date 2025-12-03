@@ -1,5 +1,8 @@
-# Environment files
+# Local environment file (copied from .env.example)
 .env
+
+# Local sensor configuration (copied from sensors.example.json)
+sensors.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

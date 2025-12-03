@@ -1,0 +1,4 @@
+adafruit-circuitpython-dht
+RPi.GPIO
+python-dotenv
+paho-mqtt
