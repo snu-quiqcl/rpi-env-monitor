@@ -1,7 +1,7 @@
-# Environment files
+# Local environment file (copied from .env.example)
 .env
 
-# Local systemd unit
+# Local systemd unit (machine-specific)
 systemd/rpi-env-subscriber.service
 
 # Byte-compiled / optimized / DLL files
