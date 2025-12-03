@@ -1,4 +1,8 @@
+# Environment files
 .env
+
+# Local systemd unit
+systemd/rpi-env-subscriber.service
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -133,7 +133,7 @@ def main() -> None:
     print(f"[INIT] MQTT broker: {MQTT_BROKER_HOST}:{MQTT_BROKER_PORT}")
     print(f"[INIT] MQTT topic:  {MQTT_TOPIC!r}")
 
-    client = mqtt.Client(client_id=MQTT_CLIENT_ID)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id=MQTT_CLIENT_ID)
 
     # Set callbacks
     client.on_connect = on_connect

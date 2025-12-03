@@ -1,0 +1,36 @@
+[Unit]
+Description=Lab environment MQTT subscriber
+After=network-online.target mosquitto.service postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# NOTE: Change this user/group to the account that owns the project
+User=pi
+Group=pi
+
+# NOTE: Change /home/pi/server to the absolute path of your project root
+WorkingDirectory=/home/pi/server/src
+
+# NOTE: Path to your .env file with DB and MQTT settings
+EnvironmentFile=/home/pi/server/.env
+
+# --- pyenv specific settings ---
+# NOTE: Adjust PYENV_ROOT and PATH if pyenv is installed elsewhere
+Environment=PYENV_ROOT=/home/pi/.pyenv
+Environment=PATH=/home/pi/.pyenv/shims:/home/pi/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+# Make Python stdout/stderr unbuffered so logs appear immediately in journald
+Environment=PYTHONUNBUFFERED=1
+# -------------------------------
+
+# Use the python that pyenv resolves based on .python-version in WorkingDirectory
+ExecStart=/usr/bin/env python mqtt_subscriber.py
+
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
