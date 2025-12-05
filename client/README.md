@@ -25,7 +25,7 @@ client/
 │  ├─ publisher_core.py             # Generic MQTT publishing loop
 │  └─ mqtt_publisher.py             # Entry point for this Raspberry Pi
 └─ systemd/
-   └─ mqtt_publisher.service.example  # Example systemd unit for the client
+   └─ rpi-env-publisher.service.example  # Example systemd unit for the client
 ```
 
 ---
@@ -184,14 +184,14 @@ Once the publisher works manually, you can run it as a system service so that it
 
    ```bash
    cd /path/to/rpi-env-monitor/client
-   sudo cp systemd/mqtt_publisher.service.example \
-       /etc/systemd/system/mqtt_publisher.service
+   sudo cp systemd/rpi-env-publisher.service.example \
+       /etc/systemd/system/rpi-env-publisher.service
    ```
 
 2. Edit the unit file to match your paths and user:
 
    ```bash
-   sudo nano /etc/systemd/system/mqtt_publisher.service
+   sudo nano /etc/systemd/system/rpi-env-publisher.service
    ```
 
    Adjust at least:
@@ -216,14 +216,14 @@ Once the publisher works manually, you can run it as a system service so that it
 
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable mqtt_publisher.service
-   sudo systemctl start mqtt_publisher.service
+   sudo systemctl enable rpi-env-publisher.service
+   sudo systemctl start rpi-env-publisher.service
    ```
 
 4. Check status:
 
    ```bash
-   sudo systemctl status mqtt_publisher.service
+   sudo systemctl status rpi-env-publisher.service
    ```
 
    You should see `active (running)` if everything is OK.
@@ -243,10 +243,10 @@ To view logs:
 
 ```bash
 # Show recent logs
-sudo journalctl -u mqtt_publisher.service -n 100
+sudo journalctl -u rpi-env-publisher.service -n 100
 
 # Follow logs in real time
-sudo journalctl -u mqtt_publisher.service -f
+sudo journalctl -u rpi-env-publisher.service -f
 ```
 
 This is the primary place to look when debugging sensor or MQTT issues on each client Raspberry Pi.
